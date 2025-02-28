@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
+            {{ __('students') }}
             <p>{{ $students->count() }} students found.</p>
             
         </h2>
@@ -18,7 +18,7 @@
     </div>
 
     @if($students->isNotEmpty())
-    <p>Table is being displayed!</p>
+
         <div class="overflow-x-auto w-full">
             <table
                 class="border-separate border-2 m-auto my-4 lg:w-[90%] w-full text-center border-grey border-spacing-2 md:border-spacing-8 bg-stockhive-grey rounded-lg">
