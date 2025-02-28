@@ -33,6 +33,18 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable();
         });
 
+        
+        Schema::create('Timesheet', function (Blueprint $table) {
+            $table->id()->primary();
+            $table->foreignID('user_id')->references('id')->on('users')->onDelete('cascade');
+            //$table->foreignID('order_id')->references('id')->on('order')->onDelete('cascade');
+            $table->string('recruiter_name');
+            $table->string('requested_hours');
+            $table->timestamp('date_time');
+            $table->integer('remaining_hours');
+            $table->timestamps();
+        });
+
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

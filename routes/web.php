@@ -15,6 +15,16 @@ Route::get('/dashboard', function () {
 Route::get('/students', [StudentController::class, 'index'])
 ->name('/students');
 
+Route::get('/students/show_timesheet', [StudentController::class, 'show_timesheet'])
+->name('students.show_timesheet');
+
+Route::get('/students/timesheet', [StudentController::class, 'create'])
+->name('students.store');
+
+Route::post('/students/timesheet', [StudentController::class, 'store'])
+    ->name('timesheet.store');
+//Timesheet.blade.php
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
