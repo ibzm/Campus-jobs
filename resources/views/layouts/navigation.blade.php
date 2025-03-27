@@ -12,9 +12,24 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+    {{ __('Dashboard') }}
+</x-nav-link>
+
+<x-nav-link :href="route('recruiter.index')" :active="request()->routeIs('recruiter.index')">
+    {{ __('Recruiter Dashboard') }}
+</x-nav-link>
+
+<x-nav-link :href="route('recruiter.create')" :active="request()->routeIs('recruiter.create')">
+    {{ __('Create Timesheet') }}
+</x-nav-link>
+
+<x-nav-link :href="route('recruiter.students')" :active="request()->routeIs('recruiter.students')">
+    {{ __('My Students') }}
+</x-nav-link>
+
+
+
                 </div>
             </div>
 
