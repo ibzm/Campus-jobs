@@ -12,24 +12,46 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-    {{ __('Dashboard') }}
-</x-nav-link>
+                    <!-- Admin links -->
+                    @if(Auth::user()->hasRole('Admin'))
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Admin Dashboard') }}
+                        </x-nav-link>
+                    @endif
 
-<x-nav-link :href="route('recruiter.index')" :active="request()->routeIs('recruiter.index')">
-    {{ __('Recruiter Dashboard') }}
-</x-nav-link>
+                    <!-- Recruiter links -->
+                    @if(Auth::user()->hasRole('Recruiter'))
+                        <x-nav-link :href="route('recruiter.index')" :active="request()->routeIs('recruiter.index')">
+                            {{ __('Recruiter Dashboard') }}
+                        </x-nav-link>
 
-<x-nav-link :href="route('recruiter.create')" :active="request()->routeIs('recruiter.create')">
-    {{ __('Create Timesheet') }}
-</x-nav-link>
+                        <x-nav-link :href="route('recruiter.create')" :active="request()->routeIs('recruiter.create')">
+                            {{ __('Create Timesheet') }}
+                        </x-nav-link>
 
-<x-nav-link :href="route('recruiter.students')" :active="request()->routeIs('recruiter.students')">
-    {{ __('My Students') }}
-</x-nav-link>
+                        <x-nav-link :href="route('recruiter.hour-request')" :active="request()->routeIs('recruiter.hour_request')">
+                            {{ __('Hour Request') }}
+                        </x-nav-link>
 
+                        <x-nav-link :href="route('recruiter.students')" :active="request()->routeIs('recruiter.students')">
+                            {{ __('My Students') }}
+                        </x-nav-link>
 
+                        <x-nav-link :href="route('recruiter.exportHourRequests')" :active="request()->routeIs('recruiter.exportHourRequests')">
+                            {{ __('Export Hour Requests') }}
+                        </x-nav-link>
+                    @endif
 
+                    <!-- Student links -->
+                    @if(Auth::user()->hasRole('Student'))
+                        <x-nav-link :href="route('student.dashboard')" :active="request()->routeIs('student.dashboard')">
+                            {{ __('Student Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('student.approvedTimesheets')" :active="request()->routeIs('student.approvedTimesheets')">
+                            {{ __('Approved Timesheets') }}
+                        </x-nav-link>
+           #
+                    @endif
                 </div>
             </div>
 
@@ -82,9 +104,48 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
+            <!-- Admin links (for mobile) -->
+            @if(Auth::user()->hasRole('Admin'))
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                    {{ __('Admin Dashboard') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <!-- Recruiter links (for mobile) -->
+            @if(Auth::user()->hasRole('Recruiter'))
+                <x-responsive-nav-link :href="route('recruiter.index')" :active="request()->routeIs('recruiter.index')">
+                    {{ __('Recruiter Dashboard') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('recruiter.create')" :active="request()->routeIs('recruiter.create')">
+                    {{ __('Create Timesheet') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('recruiter.hour-request')" :active="request()->routeIs('recruiter.hour_request')">
+                    {{ __('Hour Request') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('recruiter.students')" :active="request()->routeIs('recruiter.students')">
+                    {{ __('My Students') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link :href="route('recruiter.exportHourRequests')" :active="request()->routeIs('recruiter.exportHourRequests')">
+                    {{ __('Export Hour Requests') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <!-- Student links (for mobile) -->
+            @if(Auth::user()->hasRole('Student'))
+                <x-responsive-nav-link :href="route('student.dashboard')" :active="request()->routeIs('student.dashboard')">
+                    {{ __('Student Dashboard') }}
+                </x-responsive-nav-link>
+                
+        <x-responsive-nav-link :href="route('student.approvedTimesheets')" :active="request()->routeIs('student.approvedTimesheets')">
+    {{ __('Approved Timesheets') }}
+</x-responsive-nav-link>
+
+        
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
@@ -113,3 +174,4 @@
         </div>
     </div>
 </nav>
+

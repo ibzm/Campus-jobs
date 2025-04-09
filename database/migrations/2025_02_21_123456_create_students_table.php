@@ -6,14 +6,13 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        // Create users table first
+      
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
@@ -23,21 +22,19 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-            $table->string('visa_status')->nullable(); // Only needed for students
-            $table->integer('remaining_hours')->default(20); // Default to 20 hours
+            $table->string('visa_status')->nullable(); 
+            $table->integer('remaining_hours')->default(20); 
         });
 
-        // Insert sample users into 'users' table
         DB::table('users')->insert([
             ['id' => 1, 'first_name' => 'John', 'second_name' => 'Doe', 'email' => 'john.doe@example.com', 'password' => bcrypt('password1'), 'visa_status' => '20 hours', 'remaining_hours' => 20],
             ['id' => 2, 'first_name' => 'Jane', 'second_name' => 'Smith', 'email' => 'jane.smith@example.com', 'password' => bcrypt('password2'), 'visa_status' => null, 'remaining_hours' => 20],  // Adjusted to match columns
-            ['id' => 3, 'first_name' => 'Alice', 'second_name' => 'Brown', 'email' => 'alice.brown@example.com', 'password' => bcrypt('password3'), 'visa_status' => '20 hours', 'remaining_hours' => 20],
+            ['id' => 3, 'first_name' => 'Alice', 'second_name' => 'Brown', 'email' => 'ibzm99@outlook.com', 'password' => bcrypt('password3'), 'visa_status' => '20 hours', 'remaining_hours' => 20],
             ['id' => 4, 'first_name' => 'Bob', 'second_name' => 'White', 'email' => 'bob.white@example.com', 'password' => bcrypt('password4'), 'visa_status' => null, 'remaining_hours' => 20], // Adjusted to match columns
             ['id' => 5, 'first_name' => 'Charlie', 'second_name' => 'Black', 'email' => 'charlie.black@example.com', 'password' => bcrypt('password5'), 'visa_status' => '20 hours', 'remaining_hours' => 20],
         ]);
-        
-        
-        // Create category table for roles like Student, Recruiter, Logistics
+
+
         Schema::create('category', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
@@ -49,7 +46,7 @@ return new class extends Migration
             ['id' => 3, 'name' => 'Recruiter'],
         ]);
 
-        // Create permission table for what roles can do
+   
         Schema::create('permission', function (Blueprint $table) {
             $table->id()->primary();
             $table->foreignId('category_id')->references('id')->on('category')->onDelete('cascade');
@@ -64,7 +61,7 @@ return new class extends Migration
             ['id' => 5, 'category_id' => 3, 'name' => 'Testing All'],
         ]);
 
-        // Create role table for Student, Admin, and Recruiter
+   
         Schema::create('role', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
@@ -76,7 +73,7 @@ return new class extends Migration
             ['id' => 3, 'name' => 'Recruiter'],
         ]);
 
-      
+
         Schema::create('user_role', function (Blueprint $table) {
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('role_id')->references('id')->on('role')->onDelete('cascade');
@@ -85,9 +82,9 @@ return new class extends Migration
         DB::table('user_role')->insert([
             ['user_id' => 1, 'role_id' => 3],# recuiter
             ['user_id' => 2, 'role_id' => 1],# Student
-            ['user_id' => 3, 'role_id' => 3],
-            ['user_id' => 4, 'role_id' => 1],
-            ['user_id' => 5, 'role_id' => 2],
+            ['user_id' => 3, 'role_id' => 3],#recruter
+            ['user_id' => 4, 'role_id' => 1],#student 
+            ['user_id' => 5, 'role_id' => 2],#admin
         ]);
 
 
@@ -109,8 +106,8 @@ return new class extends Migration
             ['recruiter_id' => 5, 'title' => 'Teaching Assistant'],
         ]);
 
-        // Create timesheet table for students
-        Schema::create('timesheet', function (Blueprint $table) {
+    
+        Schema::create('timesheets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('job_id')->constrained('jobs')->onDelete('cascade');
@@ -118,8 +115,11 @@ return new class extends Migration
             $table->dateTime('shift_end');
             $table->boolean('approved')->default(false);
             $table->integer('hours_requested')->default(0);
+            $table->boolean('flagged')->default(false); 
             $table->timestamps();
         });
+
+
 
         Schema::create('job_assignments', function (Blueprint $table) {
             $table->id();
@@ -130,10 +130,33 @@ return new class extends Migration
         });
 
         DB::table('job_assignments')->insert([
-            ['student_id' => 2, 'job_id' => 1, 'assigned_hours' => 10],  
-            ['student_id' => 4, 'job_id' => 2, 'assigned_hours' => 12],  
-            ['student_id' => 3, 'job_id' => 2, 'assigned_hours' => 8],  
+            ['student_id' => 2, 'job_id' => 1, 'assigned_hours' => 10],
+            ['student_id' => 4, 'job_id' => 2, 'assigned_hours' => 12],
+            ['student_id' => 3, 'job_id' => 2, 'assigned_hours' => 8],
         ]);
+
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('hour_requests', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('recruiter_id')->constrained('users')->onDelete('cascade');
+            $table->integer('requested_hours');
+            $table->enum('status', ['pending', 'approved', 'denied'])->default('pending');
+            $table->text('reason')->nullable();
+            $table->date('requested_date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
+            $table->text('comment')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -151,8 +174,10 @@ return new class extends Migration
         Schema::dropIfExists('timesheet');
         Schema::dropIfExists('jobs');
         Schema::dropIfExists('job_assignments');
+        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('hour_requests');
     }
 };
 
-  
+
 

@@ -20,7 +20,6 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -29,17 +28,15 @@ class AuthenticatedSessionController extends Controller
     
         $user = Auth::user();
     
-        // Fetch the user's role from the user_role table
         $role = DB::table('user_role')
             ->where('user_id', $user->id)
             ->join('role', 'user_role.role_id', '=', 'role.id')
-            ->value('role.name'); // Get role name
+            ->value('role.name'); 
     
-        // Redirect based on role
         if ($role === 'Admin') {
             return redirect()->route('admin.dashboard');
         } elseif ($role === 'Recruiter') {
-            return redirect()->route('recruiter.index');  // Correct route name
+            return redirect()->route('recruiter.index'); 
         } elseif ($role === 'Student') {
             return redirect()->route('student.dashboard');
         } else {
@@ -50,7 +47,6 @@ class AuthenticatedSessionController extends Controller
 
 
     /**
-     * Destroy an authenticated session.
      */
     public function destroy(Request $request): RedirectResponse
     {

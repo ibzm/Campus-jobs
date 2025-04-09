@@ -11,8 +11,12 @@
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     {{ __("You're logged in!") }}
                     <form action="{{ route('/students') }}" method="GET">
-                                    <x-primary-button>Button1</x-primary-button>
-                                </form>
+                        <x-primary-button>Button1</x-primary-button>
+                    </form>
+                    <a href="{{ route('recruiter.exportHourRequests') }}" class="btn btn-primary">Export Hour
+                        Requests</a>
+
+
                 </div>
             </div>
         </div>

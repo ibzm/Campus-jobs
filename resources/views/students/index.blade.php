@@ -23,6 +23,7 @@
                             <th class="border border-gray-300 px-4 py-2">{{ __('Shift Start') }}</th>
                             <th class="border border-gray-300 px-4 py-2">{{ __('Shift End') }}</th>
                             <th class="border border-gray-300 px-4 py-2">{{ __('Status') }}</th>
+                            <th class="border border-gray-300 px-4 py-2">{{ __('Actions') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,6 +34,15 @@
                                 <td class="border border-gray-300 px-4 py-2">{{ $timesheet->shift_start }}</td>
                                 <td class="border border-gray-300 px-4 py-2">{{ $timesheet->shift_end }}</td>
                                 <td class="border border-gray-300 px-4 py-2">{{ $timesheet->approved ? 'Approved' : 'Pending' }}</td>
+                                <td class="border border-gray-300 px-4 py-2">
+                                    @if (!$timesheet->approved)
+                                        <form action="{{ route('student.approvedTimesheets', $timesheet->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary">{{ __('Approve') }}</button>
+                                        </form>
+                                    @endif
+                                    <a href="{{ route('student.showTimesheet', $timesheet->id) }}" class="text-blue-500">{{ __('View Details') }}</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

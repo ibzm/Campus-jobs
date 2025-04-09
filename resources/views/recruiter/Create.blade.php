@@ -57,10 +57,8 @@
 
                 <!-- Submit Button -->
                 <div class="mt-4">
-                <form action="{{ route('/students') }}" method="GET">
-                                    <x-primary-button>Submit Timesheet</x-primary-button>
-                                </form>
-                </div>
+    <x-primary-button type="submit">Submit Timesheet</x-primary-button>
+</div>
             </form>
         </div>
     </div>

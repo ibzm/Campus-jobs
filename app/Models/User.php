@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
+    use HasFactory, Notifiable; 
+
     protected $table = 'users'; 
     /**
-
+    
      *
      * @var list<string>
      */
@@ -24,7 +27,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
      *
      * @var list<string>
      */
@@ -34,8 +36,6 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
      * @return array<string, string>
      */
     protected function casts(): array
@@ -56,9 +56,10 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'recruiter_id')->where('role', 'recruiter');
     }
     public function timesheets()
-{
-    return $this->hasMany(Timesheet::class);
-}
+    {
+        return $this->hasMany(Timesheet::class);
+    }
+    
 public function jobs()
 {
     return $this->hasMany(Job::class, 'recruiter_id');
@@ -71,9 +72,13 @@ public function assignedJobs()
         ->withTimestamps();
 }
 
-public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'user_role', 'user_id', 'role_id');
+public function roles()
+{
+    return $this->belongsToMany(Role::class, 'user_role');
+}
 
-    }
+public function hasRole($roleName)
+{
+    return $this->roles->contains('name', $roleName);
+}
 }
