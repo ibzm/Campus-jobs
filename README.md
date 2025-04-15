@@ -115,3 +115,31 @@ View assigned jobs, pending timesheets, pending hour requests, history, upcoming
 
 Processing:
 Approve or reject submitted timesheets and hour requests.
+
+'id' => 1,
+'email' => 'john.doe@example.com',
+'password' => bcrypt('password1'),
+recruiter login
+                
+'id' => 2,
+'email' => 'jane.smith@example.com',
+'password' => bcrypt('password2'),
+student login 
+       
+'id' => 3
+'email' => 'ibzm99@outlook.com',
+'password' => bcrypt('password3'),
+recruiter login
+  
+'id' => 4,
+'email' => 'ibzmgaming@gmail.com',
+'password' => bcrypt('password4'),
+student login
+
+'id' => 5,
+'email' => 'charlie.black@example.com'
+'password = password5'
+admin login
+       
+
+
