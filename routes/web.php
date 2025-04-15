@@ -35,19 +35,38 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/recruiter', [RecruiterController::class, 'store'])
         ->name('recruiter.store');
+        Route::get('/recruiter/students', [RecruiterController::class, 'myStudents'])->name('recruiter.students');
 });
 
-Route::get('/recruiter/students', [RecruiterController::class, 'myStudents'])->middleware('auth')
-    ->name('recruiter.students');
+Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+Route::get('/admin/timesheet/{id}/edit', [AdminController::class, 'editTimesheet'])->name('admin.edit_timesheet');
+Route::put('/admin/timesheet/{id}', [AdminController::class, 'updateTimesheet'])->name('admin.updateTimesheet');
+Route::get('/admin/hour-request/{id}/edit', [AdminController::class, 'editHourRequest'])->name('admin.editHourRequest');
+Route::put('/admin/hour-request/{id}', [AdminController::class, 'updateHourRequest'])->name('admin.updateHourRequest');
+Route::get('/admin/export-report', [AdminController::class, 'exportReport'])->name('admin.exportReport');
+Route::get('/admin/notifications', [AdminController::class, 'notifications'])->name('admin.notifications');
+Route::get('/admin/export-hour-requests', [AdminController::class, 'exportHourRequests'])->name('admin.exportHourRequests');
+Route::get('/admin/audit-logs', [AdminController::class, 'auditLogs'])->name('admin.auditLogs');
 
-Route::get('/admin/dashboard', [AdminController::class, 'index'])
-    ->name('admin.dashboard');
 
-    Route::get('/students', [StudentController::class, 'index'])->name('student.index');
-    Route::get('/student/dashboard', [StudentController::class, 'index'])->name('student.dashboard');
-    Route::get('/timesheet/{timesheetId}', [StudentController::class, 'showTimesheet'])->name('student.showTimesheet');
-    Route::post('/approve-timesheet/{timesheetId}', [StudentController::class, 'approveTimesheet'])->name('student.approveTimesheet');
-    Route::get('/student/approved-timesheets', [StudentController::class, 'showApprovedTimesheets'])->name('student.approvedTimesheets');
     
+
+    Route::middleware('auth')->group(function () {
+      
+        Route::get('/students', [StudentController::class, 'index'])->name('student.index');
+        Route::get('/student/dashboard', [StudentController::class, 'index'])->name('student.dashboard');
+        Route::get('/timesheet/{timesheetId}', [StudentController::class, 'showTimesheet'])->name('student.showTimesheet');
+        Route::post('/approve-timesheet/{timesheetId}/process', [StudentController::class, 'processTimesheet'])->name('student.processTimesheet');
+        Route::get('/student/approved-timesheets', [StudentController::class, 'showApprovedTimesheets'])->name('student.approvedTimesheets');
+        
+        Route::get('/student/history', [StudentController::class, 'history'])->name('student.history');
+        Route::get('/student/upcoming-shifts', [StudentController::class, 'upcomingShifts'])->name('student.upcomingShifts');
+        Route::get('/student/notifications', [StudentController::class, 'notifications'])->name('student.notifications');
+        
+
+        Route::post('/student/hour-request/{hourRequestId}/process', [StudentController::class, 'processHourRequest'])->name('student.processHourRequest');
+    });
+    
+
 
 require __DIR__ . '/auth.php';

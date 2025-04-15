@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Student extends Model
 {
     protected $table = 'students'; 
-
-    protected $fillable = [
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }    protected $fillable = [
         'first_name', 
         'email', 
         'visa_status', 

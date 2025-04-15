@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -6,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\HourRequest;
 
-class HourRequestDenied extends Notification
+class HourRequestApproved extends Notification
 {
     use Queueable;
 
@@ -25,18 +26,18 @@ class HourRequestDenied extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('Hour Request Denied')
-                    ->line('Your requested hours have been denied due to insufficient remaining hours or exceeding the available limit.')
-                    ->action('View Hour Request', url('/hour-requests/' . $this->hourRequest->id))
-                    ->line('Please review the request and try again if necessary.');
+                    ->subject('Hour Request Approved')
+                    ->line("Your hour request for {$this->hourRequest->requested_hours} hours on {$this->hourRequest->requested_date} has been approved.")
+                    ->action('View Details', url('/hour-requests/' . $this->hourRequest->id))
+                    ->line('Thank you for using Campus Jobs!');
     }
 
     public function toDatabase($notifiable)
     {
         return [
             'hour_request_id' => $this->hourRequest->id,
-            'status' => 'rejected',
-            'message' => 'This hour request has been denied due to insufficient remaining hours or other constraints.',
+            'status' => 'approved',
+            'message' => "Your hour request for {$this->hourRequest->requested_hours} hours on {$this->hourRequest->requested_date} has been approved.",
         ];
     }
 }

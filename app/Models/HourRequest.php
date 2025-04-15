@@ -9,7 +9,16 @@ class HourRequest extends Model
 {
     use HasFactory;
 
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'student_id');
+    }
 
+
+    public function recruiter()
+    {
+        return $this->belongsTo(User::class, 'recruiter_id');
+    }
     protected $fillable = [
         'student_id',      
         'recruiter_id',

@@ -3,7 +3,6 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
@@ -14,10 +13,23 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <!-- Admin links -->
                     @if(Auth::user()->hasRole('Admin'))
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                            {{ __('Admin Dashboard') }}
-                        </x-nav-link>
-                    @endif
+    <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+        {{ __('Admin Dashboard') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.notifications')" :active="request()->routeIs('admin.notifications')">
+        {{ __('Notifications') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.exportReport')" :active="request()->routeIs('admin.exportReport')">
+        {{ __('Export Timesheets') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.exportHourRequests')" :active="request()->routeIs('admin.exportHourRequests')">
+        {{ __('Export Hour Requests') }}
+    </x-nav-link>
+    <x-nav-link :href="route('admin.auditLogs')" :active="request()->routeIs('admin.auditLogs')">
+        {{ __('Audit Logs') }}
+    </x-nav-link>
+@endif
+
 
                     <!-- Recruiter links -->
                     @if(Auth::user()->hasRole('Recruiter'))
@@ -42,16 +54,24 @@
                         </x-nav-link>
                     @endif
 
-                    <!-- Student links -->
-                    @if(Auth::user()->hasRole('Student'))
-                        <x-nav-link :href="route('student.dashboard')" :active="request()->routeIs('student.dashboard')">
-                            {{ __('Student Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('student.approvedTimesheets')" :active="request()->routeIs('student.approvedTimesheets')">
-                            {{ __('Approved Timesheets') }}
-                        </x-nav-link>
-           #
-                    @endif
+                   <!-- Student links -->
+@if(Auth::user()->hasRole('Student'))
+    <x-nav-link :href="route('student.dashboard')" :active="request()->routeIs('student.dashboard')">
+        {{ __('Student Dashboard') }}
+    </x-nav-link>
+    <x-nav-link :href="route('student.approvedTimesheets')" :active="request()->routeIs('student.approvedTimesheets')">
+        {{ __('Approved Timesheets') }}
+    </x-nav-link>
+    <x-nav-link :href="route('student.history')" :active="request()->routeIs('student.history')">
+        {{ __('History') }}
+    </x-nav-link>
+    <x-nav-link :href="route('student.upcomingShifts')" :active="request()->routeIs('student.upcomingShifts')">
+        {{ __('Upcoming Shifts') }}
+    </x-nav-link>
+    <x-nav-link :href="route('student.notifications')" :active="request()->routeIs('student.notifications')">
+        {{ __('Notifications') }}
+    </x-nav-link>
+@endif
                 </div>
             </div>
 
@@ -101,15 +121,20 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <!-- Admin links (for mobile) -->
-            @if(Auth::user()->hasRole('Admin'))
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                    {{ __('Admin Dashboard') }}
-                </x-responsive-nav-link>
-            @endif
+         <!-- Admin links (for mobile) -->
+@if(Auth::user()->hasRole('Admin'))
+    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+        {{ __('Admin Dashboard') }}
+    </x-responsive-nav-link>
+    <x-responsive-nav-link :href="route('admin.notifications')" :active="request()->routeIs('admin.notifications')">
+        {{ __('Notifications') }}
+    </x-responsive-nav-link>
+    <x-responsive-nav-link :href="route('admin.exportReport')" :active="request()->routeIs('admin.exportReport')">
+        {{ __('Export Report') }}
+    </x-responsive-nav-link>
+@endif
 
             <!-- Recruiter links (for mobile) -->
             @if(Auth::user()->hasRole('Recruiter'))
