@@ -1,107 +1,145 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
+
     public function up(): void
     {
-        Schema::create( 'students', function (Blueprint $table) {
-            $table->id();   
+
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
             $table->string('first_name');
+            $table->string('second_name');
             $table->string('email')->unique();
-            $table->string('visa_status');
-            $table->integer('remaining_hours');
-            $table->integer('student_id');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->rememberToken();
+            $table->timestamps();
+            $table->string('visa_status')->nullable();
+            $table->integer('remaining_hours')->default(20);
         });
 
-        DB::table('students')->insert([
-            ['id' => 1, 'first_name' => 'ibzm', 'email' => 'ibzm99@outlook.com','visa_status' => '20 hours', 'remaining_hours' => 20,  'student_id' => 2212112]    
-        ]);
-
-
-              //role based enforcement
-              Schema::create('category', function (Blueprint $table) {
-                $table->id()->primary();
-                $table->string('name');
-            });
-    
-            DB::table('category')->insert([
-                ['id' => '1', 'name' => 'Student'],
-                ['id' => '2', 'name' => 'Logisitics'],
-                ['id' => '3', 'name' => 'Recruiter'],
-            ]);
-
-          //Permissions linked to role so what they can do e.g Create a timesheet
-          Schema::create('permission', function (Blueprint $table) {
+        Schema::create('category', function (Blueprint $table) {
             $table->id()->primary();
-            $table->foreignID('category_id')->references('id')->on('category')->onDelete('cascade');
             $table->string('name');
         });
-   
-        DB::table('permission')->insert([
-            ['id' => '1', 'category_id' => '1', 'name' => 'Create Timesheet'],
-            ['id' => '2', 'category_id' => '1', 'name' => 'View Timesheet'],
-            ['id' => '3', 'category_id' => '2', 'name' => 'Approve Timesheet'],
-            ['id' => '4', 'category_id' => '3', 'name' => 'selling flipflops'],
-            ['id' => '5', 'category_id' => '3', 'name' => 'testing all'],
-        ]);
 
-        //role are the chose role names so student admin and recruiter
+
+        Schema::create('permission', function (Blueprint $table) {
+            $table->id()->primary();
+            $table->foreignId('category_id')->references('id')->on('category')->onDelete('cascade');
+            $table->string('name');
+        });
+
+
         Schema::create('role', function (Blueprint $table) {
             $table->id()->primary();
             $table->string('name');
         });
-        DB::table('role')->insert([
-            ['id' => '1', 'name' => 'Student'],
-            ['id' => '2', 'name' => 'Admin'],
-            ['id' => '3', 'name' => 'Recruiter']
-        ]);
-   
 
-        //User role attatached to each user so 1 will be a student e.g 
+
         Schema::create('user_role', function (Blueprint $table) {
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('role_id')->references('id')->on('role')->onDelete('cascade');
         });
-        DB::table('user_role')->insert([
-            ['user_id' => '1', 'role_id' => '1' ]
-        ]);
 
-
-        
+      
         Schema::create('role_permission', function (Blueprint $table) {
-            $table->foreignID('role_id')->references('id')->on('role')->onDelete('cascade');
-            $table->foreignID('permission_id')->references('id')->on('permission')->onDelete('cascade');
+            $table->foreignId('role_id')->references('id')->on('role')->onDelete('cascade');
+            $table->foreignId('permission_id')->references('id')->on('permission')->onDelete('cascade');
         });
 
-        //role permissions is what gives the user the role permission so this can go as high as u have diffrent things a user can do 
-        DB::table('role_permission')->insert([
-            ['role_id' => '1', 'permission_id' => '1'],
-            ['role_id' => '1', 'permission_id' => '2'],
-            ['role_id' => '1', 'permission_id' => '3'],
-        ]);
+
+        Schema::create('hour_requests', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('recruiter_id')->constrained('users')->onDelete('cascade');
+            $table->integer('requested_hours');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->date('requested_date')->nullable();
+            $table->time('start_time')->nullable();
+            $table->time('end_time')->nullable();
+            $table->text('reason')->nullable();
+            $table->text('comment')->nullable();
+            $table->boolean('is_dummy')->default(false);
+            $table->timestamps();
+        });
+
+      
+
+ 
+        Schema::create('jobs', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->foreignId('recruiter_id')->constrained('users')->onDelete('cascade');
+            $table->timestamps();
+        });
 
 
+        Schema::create('timesheets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('job_id')->constrained('jobs')->onDelete('cascade');
+            $table->dateTime('shift_start');
+            $table->dateTime('shift_end');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->integer('hours_requested')->default(0);
+            $table->foreignId('hour_request_id')->nullable()->constrained('hour_requests')->onDelete('cascade');
+            $table->boolean('flagged')->default(false);
+            $table->text('override_message')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('job_assignments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('job_id')->constrained('jobs')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->integer('assigned_hours');
+            $table->timestamps();
+        });
+
+
+
+        Schema::create('notifications', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
+            $table->timestamps();
+        });
+        Schema::create('audit_logs', function (Blueprint $table) {
+            $table->id();
+            $table->string('record_type'); 
+            $table->unsignedBigInteger('record_id');
+            $table->unsignedBigInteger('user_id');
+            $table->text('changes')->nullable();
+            $table->timestamps();
+        });
     }
-
-    
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('students');
+        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('job_assignments');
+        Schema::dropIfExists('timesheets');
+        Schema::dropIfExists('jobs');
+        Schema::dropIfExists('hour_requests');
         Schema::dropIfExists('role_permission');
-        Schema::dropIfExists('permission');
-        Schema::dropIfExists('role');
         Schema::dropIfExists('user_role');
+        Schema::dropIfExists('role');
+        Schema::dropIfExists('permission');
         Schema::dropIfExists('category');
+        Schema::dropIfExists('users');
     }
 };
+
+
+
